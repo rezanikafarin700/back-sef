@@ -28,7 +28,17 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            return User::findOrFail($id);
+            $user =  User::findOrFail($id);
+            $data = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'mobile' => $user->mobile,
+                'type' => $user->type,
+                'city' => $user->city,
+                'email' => $user->email,
+                'products' => $user->products,
+            ];
+            return response()->json($data,200);
         }
         catch (\Exception $e){
             return response(['message' => $e->getMessage()],404);
