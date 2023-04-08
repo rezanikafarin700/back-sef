@@ -18,3 +18,14 @@ Route::group(['prefix' => 'users'],function (){
         Route::delete('/{id}','UserController@destroy');
     });
 });
+
+
+Route::group(['prefix' => 'products'],function (){
+    Route::namespace('\App\Http\Controllers\API')->group(function (){
+        Route::get('/','ProductController@index');
+        Route::get('/{id}','ProductController@show');
+        Route::post('/','ProductController@store');
+        Route::put('/{id}','ProductController@update');
+        Route::delete('/{id}','ProductController@destroy');
+    });
+});
