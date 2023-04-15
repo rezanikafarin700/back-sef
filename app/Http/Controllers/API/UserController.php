@@ -6,12 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+//        dd(auth()->guard('api')->user());
         $users = User::paginate(4);
 //        $users =  User::all();
         return response()->json($users,200);
