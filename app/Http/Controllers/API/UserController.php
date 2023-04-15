@@ -36,7 +36,8 @@ class UserController extends Controller
             'type' => $request->type,
             'city' => $request->city,
             'email' => $request->email,
-            'password' => bcrypt($request->password)
+            'password' => bcrypt($request->password),
+            'api_token' => $request->api_token
         ]);
         return response($user,201);
 
