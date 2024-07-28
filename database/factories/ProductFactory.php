@@ -17,10 +17,11 @@ class ProductFactory extends Factory
     {
         return [
             'user_id' => $this->faker->randomNumber(1,10),
-            'name' =>$this->faker->name(),
-            'image' => $this->faker->imageUrl(),
+            'title' =>$this->faker->name(),
             'price' => $this->faker->numberBetween(1000,10000),
             'discount' => $this->faker->numberBetween(1,100),
+            'shipping_cost' => $this->faker->numberBetween(1000,10000),
+            'description' => $this->faker->text(),
         ];
     }
 }
