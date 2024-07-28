@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -23,5 +24,20 @@ class AuthController extends Controller
         return response([
             'error' => 'اطلاعات کاربری اشتباه است'
         ],401);
+    }
+
+    public function logout(Request $request)
+    {
+        $header = $request->header('Authorization');
+        $token = Str::startsWith($header,'Bearer ') ? Str::substr($header,7) : null;
+        $user = $token ? User::where('api_token',$token)->first() : null;
+        $user->api_token = null;
+        $user->save();
+        return response($user,201);
+    }
+
+    public function user()
+    {
+        return \auth('api')->user();
     }
 }
