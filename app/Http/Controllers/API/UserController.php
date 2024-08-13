@@ -7,6 +7,8 @@ use App\Http\Requests\User\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Support\Str;
+
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,10 +18,10 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-//        dd(auth()->guard('api')->user());
+        //        dd(auth()->guard('api')->user());
         $users = User::paginate(4);
-//        $users =  User::all();
-        return response()->json($users,200);
+        //        $users =  User::all();
+        return response()->json($users, 200);
     }
 
 
@@ -35,12 +37,13 @@ class UserController extends Controller
             'mobile' => $request->mobile,
             'type' => $request->type,
             'city' => $request->city,
+            'address' => $request->address,
             'email' => $request->email,
+            // 'avatar' => $request->avatar,
             'password' => bcrypt($request->password),
-            'api_token' => $request->api_token
+            'api_token' => Str::random(100),
         ]);
-        return response($user,201);
-
+        return response($user, 201);
     }
 
 
@@ -55,13 +58,13 @@ class UserController extends Controller
                 'mobile' => $user->mobile,
                 'type' => $user->type,
                 'city' => $user->city,
+                'address' => $user->address,
                 'email' => $user->email,
                 'products' => $user->products,
             ];
-            return response()->json($data,200);
-        }
-        catch (\Exception $e){
-            return response(['message' => $e->getMessage()],404);
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response(['message' => $e->getMessage()], 404);
         }
     }
 
@@ -73,9 +76,9 @@ class UserController extends Controller
     public function update(UpdateRequest $request, $id)
     {
         $user =  User::findOrFail($id);
-        $data = $request->only(['name','city','password']);
+        $data = $request->only(['name', 'city', 'password']);
         $user->update($data);
-        return response($user,202);
+        return response($user, 202);
     }
 
 
@@ -84,6 +87,6 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $user->delete();
-        return response(null,204);
+        return response(null, 204);
     }
 }

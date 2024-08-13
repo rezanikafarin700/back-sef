@@ -19,10 +19,12 @@ class CreateUsersTable extends Migration
             $table->string('mobile')->unique();
             $table->enum('type',['USER','ADMIN'])->default('USER');
             $table->string('city');
+            $table->string('address');
             $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('api_token')->unique()->nullable();
+            $table->string('avatar')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

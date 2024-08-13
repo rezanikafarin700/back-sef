@@ -25,10 +25,10 @@ class StoreRequest extends FormRequest
     {
         return [
             'user_id' => 'required|integer',
-            'name' => 'required|min:1|max:100',
-            'image' => 'required|min:1',
+            'title' => 'required|min:1|max:100',
             'price' => 'required|integer',
-            'discount' => 'required|integer'
+            'discount' => 'required|integer',
+            'shipping_cost' => 'required|integer'
 
         ];
     }

@@ -1,9 +1,19 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/',function(){
     return view('welcome');
+});
+
+Route::get('/userall',function(){
+    $users =  User::all();
+    dd($users);
+});
+
+Route::get('/password',function(){
+    return bcrypt('1234567');
 });
 
 /*

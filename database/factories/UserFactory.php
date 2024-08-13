@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Ybazli\Faker\Facades\Faker;
 
 class UserFactory extends Factory
 {
@@ -16,14 +17,20 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name(),
-            'mobile' => $this->faker->unique()->phoneNumber(),
-            'type' => $this->faker->randomElement(['USER' ,'ADMIN']),
-            'city' => $this->faker->city(),
+            // 'name' => $this->faker->name(),
+            'name' => Faker::firstName(),
+            // 'mobile' => $this->faker->unique()->phoneNumber(),
+            'mobile' => Faker::mobile(),
+            'type' => $this->faker->randomElement(['USER', 'ADMIN']),
+            // 'city' => $this->faker->city(),
+            'city' => Faker::city(),
+            'address' => Faker::address(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' =>  bcrypt('123456'),
+            'password' =>  bcrypt('1234567'),
             'remember_token' => Str::random(10),
+            'api_token' => Str::random(100)
+
         ];
     }
 
