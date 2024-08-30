@@ -18,9 +18,8 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        //        dd(auth()->guard('api')->user());
         $users = User::paginate(4);
-        //        $users =  User::all();
+            //    $users =  User::all();
         return response()->json($users, 200);
     }
 
@@ -39,10 +38,19 @@ class UserController extends Controller
             'city' => $request->city,
             'address' => $request->address,
             'email' => $request->email,
-            // 'avatar' => $request->avatar,
             'password' => bcrypt($request->password),
+            // 'avatar' => $request->avatar ? $request->avatar->name : "",
             'api_token' => Str::random(100),
         ]);
+            $file = $request->file('avatar');
+            $name = $file->getClientOriginalName();
+            $dot = strpos($name,'.');
+            $nameImage = $user->id . substr($name,$dot);
+            $file->move('user_avatar',$nameImage);
+            $user->avatar= $nameImage;
+            $user->save();
+
+
         return response($user, 201);
     }
 

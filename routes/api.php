@@ -21,6 +21,7 @@ Route::get('/test',function (Request $request){
 
 Route::group(['prefix' => 'users'],function (){
     Route::namespace('\App\Http\Controllers\API')->group(function (){
+        // Route::middleware('check-token')->get('/','UserController@index');
         Route::middleware('check-token')->get('/','UserController@index');
         Route::get('/{id}','UserController@show');
         Route::post('/','UserController@store');
