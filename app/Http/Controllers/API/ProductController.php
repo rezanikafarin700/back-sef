@@ -6,16 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Procuct\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
 use App\Models\Product;
+use App\Models\Image;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+
+
 
 class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::paginate(4);
-//        $productss =  Product::all();
-        return response()->json($products,200);
+        $products = Product::orderBy('created_at', 'desc')->paginate(4);
+        //        $productss =  Product::all();
+        return response()->json($products, 200);
     }
 
 
@@ -28,13 +32,42 @@ class ProductController extends Controller
     {
         $product = Product::create([
             'user_id' => $request->user_id,
-            'name' => $request->name,
-            'image' => $request->image,
+            'title' => $request->title,
             'price' => $request->price,
             'discount' => $request->discount,
+            'description' => $request->description,
+            'return' => $request->return,
+            'shipping_cost' => $request->shipping_cost,
         ]);
-        return response($product,201);
 
+        if ($request->hasFile('images')) {
+            $i = 0;
+            foreach ($request->images as $img) {
+                $name = $img->getClientOriginalName();
+                $dot = strpos($name, '.');
+                $nameImage = time() . "_" . $product->id . "_" . $i . substr($name, $dot);
+                $myfile = public_path("product_image\\" . $product->id . "\\" . $nameImage);
+                if (file_exists($myfile)) {
+                    File::delete($myfile);
+                }
+                $files = $request->file("images");
+                $file = $files[$i];
+                $file->move('product_image/' . $product->id, $nameImage);
+
+                if ($i === 0) {
+                    $product->image = "http://localhost/back-sef/public/product_image/" . $product->id . "/" . $nameImage;
+                    $product->save();
+                } else {
+                    $image = new Image();
+                    $image->address = "http://localhost/back-sef/public/product_image/" . $product->id . "/" . $nameImage;
+                    $image->product_id = $product->id;
+                    $image->save();
+                }
+                $i += 1;
+            }
+        }
+
+        return response($product, 201);
     }
 
 
@@ -45,31 +78,70 @@ class ProductController extends Controller
             $product =  Product::findOrFail($id);
             $data = [
                 'id' => $product->id,
+                'return' => $product->return,
                 'user_id' => $product->user_id,
-                'name' => $product->name,
+                'title' => $product->title,
                 'image' => $product->image,
                 'price' => $product->price,
                 'discount' => $product->discount,
+                'description' => $product->description,
+                'shipping_cost' => $product->shipping_cost,
+                'images' => $product->images,
                 'products' => $product->user,
             ];
-            return response()->json($data,200);
-        }
-        catch (\Exception $e){
-            return response(['message' => $e->getMessage()],404);
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response(['message' => $e->getMessage()], 404);
         }
     }
 
 
-    public function edit($id)
-    {
-        //
-    }
     public function update(\App\Http\Requests\Product\UpdateRequest $request, $id)
     {
         $product =  Product::findOrFail($id);
-        $data = $request->only(['name','image','price','discount']);
+        $data = $request->only(['title', 'shipping_cost', 'return', 'description', 'price', 'image', 'images']);
+
+        if ($request->idDeleteImages) {
+            $i = 0;
+            foreach ($request->idDeleteImages as $id) {
+                $dot = strpos($request->nameDeleteImages[$i], '.');
+                if($request->nameDeleteImages[$i][$dot - 1] == "0"){
+                    $product->image = "";
+                    $product->save();
+                }
+                Image::where('id', $id)->delete();
+                $myfile = public_path("product_image\\" . $product->id . "\\" . $request->nameDeleteImages[$i]);
+                File::delete($myfile);
+                $i += 1;
+            }
+        }
+
+        if ($request->hasFile('images')) {
+            $i = 0;
+            foreach ($request->images as $img) {
+                $name = $img->getClientOriginalName();
+                $dot = strpos($name, '.');
+                $nameImage = time() . "_" . $product->id . "_" . $i . substr($name, $dot);
+                $myfile = public_path("product_image\\" . $product->id . "\\" . $nameImage);
+
+                $files = $request->file("images");
+                $file = $files[$i];
+                $file->move('product_image/' . $product->id, $nameImage);
+                if ($product->image == "") {
+                    $product->image = "http://localhost/back-sef/public/product_image/" . $product->id . "/" . $nameImage;
+                    $product->save();
+                } else {
+                    $image = new Image();
+                    $image->address = "http://localhost/back-sef/public/product_image/" . $product->id . "/" . $nameImage;
+                    $image->product_id = $product->id;
+                    $image->save();
+                }
+                $i += 1;
+            }
+        }
+
         $product->update($data);
-        return response($product,202);
+        return response($product, 202);
     }
 
 
@@ -78,7 +150,6 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $product->delete();
-        return response(null,204);
+        return response(null, 204);
     }
-
 }

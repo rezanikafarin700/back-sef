@@ -27,8 +27,8 @@ class UpdateRequest extends FormRequest
             'title' => 'required|min:1|max:100',
             'price' => 'required|integer',
             'discount' => 'required|integer',
-            'shipping_cost' => 'required|integer'
-
+            'shipping_cost' => 'required|integer',
+            'return' => 'required'
         ];
     }
 }

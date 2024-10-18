@@ -25,7 +25,7 @@ Route::group(['prefix' => 'users'],function (){
         Route::middleware('check-token')->get('/','UserController@index');
         Route::get('/{id}','UserController@show');
         Route::post('/','UserController@store');
-        Route::put('/{id}','UserController@update');
+        Route::post('/update/{id}','UserController@update');
         Route::delete('/{id}','UserController@destroy');
     });
 });
@@ -36,7 +36,7 @@ Route::group(['prefix' => 'products'],function (){
         Route::get('/','ProductController@index');
         Route::get('/{id}','ProductController@show');
         Route::post('/','ProductController@store');
-        Route::put('/{id}','ProductController@update');
+        Route::post('/{id}','ProductController@update');
         Route::delete('/{id}','ProductController@destroy');
     });
 });

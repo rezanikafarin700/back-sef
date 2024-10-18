@@ -5,9 +5,12 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 
 use Illuminate\Http\Request;
@@ -18,8 +21,8 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::paginate(4);
-            //    $users =  User::all();
+        $users = User::orderBy('created_at', 'desc')->paginate(10);
+        //    $users =  User::all();
         return response()->json($users, 200);
     }
 
@@ -39,16 +42,21 @@ class UserController extends Controller
             'address' => $request->address,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            // 'avatar' => $request->avatar ? $request->avatar->name : "",
             'api_token' => Str::random(100),
         ]);
+        if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
             $name = $file->getClientOriginalName();
-            $dot = strpos($name,'.');
-            $nameImage = $user->id . substr($name,$dot);
-            $file->move('user_avatar',$nameImage);
-            $user->avatar= $nameImage;
+            $dot = strpos($name, '.');
+            $nameImage = $user->id . substr($name, $dot);
+            $myfile = public_path("/user_avatar/" . $name);
+            if (file_exists($myfile)) {
+                $img = File::delete($myfile);
+            }
+            $file->move('user_avatar', $nameImage);
+            $user->avatar = "http://localhost/back-sef/public/user_avatar/" . $nameImage;
             $user->save();
+        }
 
 
         return response($user, 201);
@@ -63,6 +71,7 @@ class UserController extends Controller
             $data = [
                 'id' => $user->id,
                 'name' => $user->name,
+                'avatar' => $user->avatar,
                 'mobile' => $user->mobile,
                 'type' => $user->type,
                 'city' => $user->city,
@@ -81,10 +90,43 @@ class UserController extends Controller
     {
         //
     }
-    public function update(UpdateRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $user =  User::findOrFail($id);
-        $data = $request->only(['name', 'city', 'password']);
+        // if ($user->avatar != null && $request->avatar === null) {
+        //     $d = strpos($user->avatar, '.');
+        //     $filename = $user->id . substr($user->avatar, $d);
+        //     $path = public_path("/user_avatar/" . $filename);
+        //     if (file_exists($path)) {
+        //         $img = File::delete($path);
+        //     }
+        //     $user->avatar = null;
+        //     $user->save();
+        // }
+        // else
+        if (!$request->hasFile('avatar')) {
+            $dot = strpos($user->avatar, '.');
+            $name = $user->id . substr($user->avatar, $dot);
+            $myfile = public_path("/user_avatar/" . $name);
+            if (file_exists($myfile)) {
+                File::delete($myfile);
+            }
+            $user->avatar = null;
+            $user->save();
+        } else if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $name = $file->getClientOriginalName();
+            $dot = strpos($name, '.');
+            $nameImage = $user->id . substr($name, $dot);
+            $myfile = public_path("/user_avatar/" . $name);
+            if (file_exists($myfile)) {
+                File::delete($myfile);
+            }
+            $file->move('user_avatar', $nameImage);
+            $user->avatar = "http://localhost/back-sef/public/user_avatar/" . $nameImage;
+            $user->save();
+        }
+        $data = $request->only(['name', 'city', 'email', 'mobile', 'address', 'type']);
         $user->update($data);
         return response($user, 202);
     }
@@ -94,7 +136,31 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        $user->delete();
-        return response(null, 204);
+        foreach($user->products as $p){
+            $p->delete();
+        }
+        $user->save();
+        // return response($user->products,200);
+        if ($user->avatar) {
+            $dot = strpos($user->avatar, '.');
+            $name = $user->id . substr($user->avatar, $dot);
+            $myfile = public_path("/user_avatar/" . $name);
+            if (file_exists($myfile)) {
+                File::delete($myfile);
+            }
+        }
+
+        // User::find($id)->delete();
+
+        // $user = User::findOrFail($id);
+        // $user->delete();
+        // User::whereId($user->id)->delete();
+        // DB::table('users')->where('id', $id)->delete();
+        // $user->org_departments()->delete();
+        $user = User::findOrFail($id);
+        if($user){
+            return $user->delete();
+        }
+
     }
 }

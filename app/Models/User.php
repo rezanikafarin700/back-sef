@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 
+
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -54,6 +56,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(Product::class);
     }
+
+
+    public static function boot() {
+        parent::boot();
+        self::deleting(function($user) { // before delete() method call this
+             $user->products()->each(function($product) {
+                $product->delete(); // <-- direct deletion
+             });
+        });
+
+}
+
+protected static function booted()
+{
+    static::deleting(function ($user) {
+        $user->actions()->detach();
+    });
+}
 
     public function generateToken()
     {

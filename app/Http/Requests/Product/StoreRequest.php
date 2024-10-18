@@ -24,11 +24,12 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required|integer',
+            'user_id' => 'integer|nullable',
             'title' => 'required|min:1|max:100',
             'price' => 'required|integer',
             'discount' => 'required|integer',
-            'shipping_cost' => 'required|integer'
+            'shipping_cost' => 'required|integer',
+            'return' => 'required'
 
         ];
     }

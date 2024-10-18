@@ -17,7 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('mobile')->unique();
-            $table->enum('type',['USER','ADMIN'])->default('USER');
+            $table->enum('type', ['USER', 'ADMIN'])->default('USER');
             $table->string('city');
             $table->string('address');
             $table->string('email')->unique()->nullable();
@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
             $table->string('avatar')->nullable();
             $table->rememberToken();
             $table->timestamps();
+
         });
     }
 
