@@ -103,13 +103,16 @@ class ProductController extends Controller
 
         if ($request->idDeleteImages) {
             $i = 0;
-            foreach ($request->idDeleteImages as $id) {
-                $dot = strpos($request->nameDeleteImages[$i], '.');
-                if($request->nameDeleteImages[$i][$dot - 1] == "0"){
+            foreach ($request->idDeleteImages as $idDel) {
+                $slash = strrpos($product->image, '/');
+                $imageProduct = substr($product->image, $slash + 1);
+
+                if ($imageProduct == $request->nameDeleteImages[$i]) {
                     $product->image = "";
                     $product->save();
                 }
-                Image::where('id', $id)->delete();
+                
+                Image::where('id', $idDel)->delete();
                 $myfile = public_path("product_image\\" . $product->id . "\\" . $request->nameDeleteImages[$i]);
                 File::delete($myfile);
                 $i += 1;
@@ -127,7 +130,7 @@ class ProductController extends Controller
                 $files = $request->file("images");
                 $file = $files[$i];
                 $file->move('product_image/' . $product->id, $nameImage);
-                if ($product->image == "") {
+                if (strlen($product->image) == 0) {
                     $product->image = "http://localhost/back-sef/public/product_image/" . $product->id . "/" . $nameImage;
                     $product->save();
                 } else {
@@ -137,6 +140,15 @@ class ProductController extends Controller
                     $image->save();
                 }
                 $i += 1;
+            }
+        }
+
+        if (strlen($product->image) == 0) {
+            $allImages = Image::where('product_id', $id)->get();
+            if (count($allImages) > 0) {
+                $product->image = $allImages[0]->address;
+                $product->save();
+                $allImages[0]->delete();
             }
         }
 
