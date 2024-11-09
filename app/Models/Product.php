@@ -9,7 +9,7 @@ class Product extends Model
 {
     use HasFactory;
     protected $table = 'products';
-    protected $fillable = ['user_id', 'title', 'image', 'price', 'discount', 'shipping_cost', 'return', 'description'];
+    protected $fillable = ['user_id','category_id', 'title', 'image', 'price', 'discount', 'shipping_cost', 'return', 'description'];
 
     public function user()
     {
@@ -20,6 +20,8 @@ class Product extends Model
     {
         return $this->hasMany(Image::class);
     }
+
+
 
     public static function boot()
     {

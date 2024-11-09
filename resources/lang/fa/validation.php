@@ -228,5 +228,6 @@ return [
         "shipping_cost" => "هزینه حمل و نقل",
         "discount" => "تخفیف",
         "return" => "مرجوعی",
+        "category" => "دسته بندی",
     ],
 ];

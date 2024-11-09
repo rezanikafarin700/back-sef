@@ -25,7 +25,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string|min:2|max:100',
-            'mobile' => 'required|string|min:11|max:11',
+            'mobile' => 'required|string|min:11|max:11|unique:users,mobile',
             'type' => 'required',
             'city' => 'required|string|min:2|max:50',
             'address' => 'required|string|min:2',

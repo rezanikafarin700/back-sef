@@ -44,7 +44,10 @@ class UserController extends Controller
             'password' => bcrypt($request->password),
             'api_token' => Str::random(100),
         ]);
-        if ($request->hasFile('avatar')) {
+        if ($request->avatar === null) {
+            return "100";
+            return response($user, 201);
+        } else if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
             $name = $file->getClientOriginalName();
             $dot = strpos($name, '.');
@@ -93,26 +96,75 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user =  User::findOrFail($id);
-        // if ($user->avatar != null && $request->avatar === null) {
-        //     $d = strpos($user->avatar, '.');
-        //     $filename = $user->id . substr($user->avatar, $d);
-        //     $path = public_path("/user_avatar/" . $filename);
-        //     if (file_exists($path)) {
-        //         $img = File::delete($path);
-        //     }
-        //     $user->avatar = null;
-        //     $user->save();
-        // }
-        // else
+        if ($user->email == $request->email) {
+            $validated = $request->validate([
+                'name' => 'required|string|min:2|max:100',
+                'type' => 'required',
+                'city' => 'required|string|min:2|max:50',
+                'address' => 'required|string|min:2',
+                'password' => 'required|string|min:6|max:50',
+                'avatar' => 'nullable'
+
+                // mobile ens email should not validate
+                // 'email' => 'required|string|email|unique:users,email',
+                // 'mobile' => 'required|string|min:11|max:11|unique:users,mobile',
+
+            ]);
+        } else
+
+        if ($user->email != $request->email) {
+            $validated = $request->validate([
+                'name' => 'required|string|min:2|max:100',
+                'type' => 'required',
+                'city' => 'required|string|min:2|max:50',
+                'address' => 'required|string|min:2',
+                'email' => 'required|string|email|unique:users,email',
+                'password' => 'required|string|min:6|max:50',
+                'avatar' => 'nullable'
+
+                // mobile should not validate
+                // 'mobile' => 'required|string|min:11|max:11|unique:users,mobile',
+
+            ]);
+        }
+
+
+        if ($user->mobile == $request->mobile) {
+            $validated = $request->validate([
+                'name' => 'required|string|min:2|max:100',
+                'type' => 'required',
+                'city' => 'required|string|min:2|max:50',
+                'address' => 'required|string|min:2',
+                'password' => 'required|string|min:6|max:50',
+                'avatar' => 'nullable'
+
+                // mobile and email should not validate
+                // 'mobile' => 'required|string|min:11|max:11|unique:users,mobile',
+                // 'email' => 'required|string|email|unique:users,email',
+
+            ]);
+        } else
+
+        if ($user->mobile != $request->mobile) {
+            $validated = $request->validate([
+                'name' => 'required|string|min:2|max:100',
+                'mobile' => 'required|string|min:11|max:11|unique:users,mobile',
+                'type' => 'required',
+                'city' => 'required|string|min:2|max:50',
+                'address' => 'required|string|min:2',
+                'password' => 'required|string|min:6|max:50',
+                'avatar' => 'nullable'
+
+                // email should not validate
+                // 'email' => 'required|string|email|unique:users,email',
+            ]);
+        }
+
+
         if (!$request->hasFile('avatar')) {
-            $dot = strpos($user->avatar, '.');
-            $name = $user->id . substr($user->avatar, $dot);
-            $myfile = public_path("/user_avatar/" . $name);
-            if (file_exists($myfile)) {
-                File::delete($myfile);
-            }
-            $user->avatar = null;
-            $user->save();
+            $data = $request->only(['name', 'city', 'email', 'mobile', 'address', 'type']);
+            $user->update($data);
+            return response($user, 202);
         } else if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
             $name = $file->getClientOriginalName();
@@ -136,7 +188,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        foreach($user->products as $p){
+        foreach ($user->products as $p) {
             $p->delete();
         }
         $user->save();
@@ -158,9 +210,8 @@ class UserController extends Controller
         // DB::table('users')->where('id', $id)->delete();
         // $user->org_departments()->delete();
         $user = User::findOrFail($id);
-        if($user){
+        if ($user) {
             return $user->delete();
         }
-
     }
 }

@@ -19,6 +19,11 @@ Route::get('/test',function (Request $request){
     dd('salam reza');
 })->middleware('check-token');
 
+
+Route::get('/categories','\App\Http\Controllers\API\ProductController@categories');
+
+
+
 Route::group(['prefix' => 'users'],function (){
     Route::namespace('\App\Http\Controllers\API')->group(function (){
         // Route::middleware('check-token')->get('/','UserController@index');

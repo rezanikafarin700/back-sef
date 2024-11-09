@@ -7,6 +7,7 @@ use App\Http\Requests\Procuct\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
 use App\Models\Product;
 use App\Models\Image;
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -17,7 +18,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::orderBy('created_at', 'desc')->paginate(4);
+        $products = Product::orderBy('created_at', 'desc')->paginate(1000);
         //        $productss =  Product::all();
         return response()->json($products, 200);
     }
@@ -34,6 +35,7 @@ class ProductController extends Controller
             'user_id' => $request->user_id,
             'title' => $request->title,
             'price' => $request->price,
+            'category_id' => $request->category,
             'discount' => $request->discount,
             'description' => $request->description,
             'return' => $request->return,
@@ -70,12 +72,16 @@ class ProductController extends Controller
         return response($product, 201);
     }
 
-
+    public function categories(){
+        $categories = Category::all();
+        return response()->json($categories,200);
+    }
 
     public function show($id)
     {
         try {
             $product =  Product::findOrFail($id);
+            $catecory = Category::findOrFail($product->category_id);
             $data = [
                 'id' => $product->id,
                 'return' => $product->return,
@@ -87,6 +93,8 @@ class ProductController extends Controller
                 'description' => $product->description,
                 'shipping_cost' => $product->shipping_cost,
                 'images' => $product->images,
+                'category_id' => $product->category_id,
+                'category' => $catecory->name,
                 'products' => $product->user,
             ];
             return response()->json($data, 200);
@@ -111,7 +119,7 @@ class ProductController extends Controller
                     $product->image = "";
                     $product->save();
                 }
-                
+
                 Image::where('id', $idDel)->delete();
                 $myfile = public_path("product_image\\" . $product->id . "\\" . $request->nameDeleteImages[$i]);
                 File::delete($myfile);

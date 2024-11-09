@@ -26,6 +26,7 @@ class UpdateRequest extends FormRequest
         return [
             'title' => 'required|min:1|max:100',
             'price' => 'required|integer',
+            'category' => 'required|integer',
             'discount' => 'required|integer',
             'shipping_cost' => 'required|integer',
             'return' => 'required'
