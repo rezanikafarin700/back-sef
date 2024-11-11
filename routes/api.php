@@ -20,9 +20,6 @@ Route::get('/test',function (Request $request){
 })->middleware('check-token');
 
 
-Route::get('/categories','\App\Http\Controllers\API\ProductController@categories');
-
-
 
 Route::group(['prefix' => 'users'],function (){
     Route::namespace('\App\Http\Controllers\API')->group(function (){
@@ -38,10 +35,13 @@ Route::group(['prefix' => 'users'],function (){
 
 Route::group(['prefix' => 'products'],function (){
     Route::namespace('\App\Http\Controllers\API')->group(function (){
-        Route::get('/','ProductController@index');
-        Route::get('/{id}','ProductController@show');
+        Route::get('/{catId}','ProductController@index');
+        Route::get('/show/{id}','ProductController@show');
         Route::post('/','ProductController@store');
         Route::post('/{id}','ProductController@update');
         Route::delete('/{id}','ProductController@destroy');
     });
 });
+
+
+Route::get('/categories','\App\Http\Controllers\API\ProductController@categories');

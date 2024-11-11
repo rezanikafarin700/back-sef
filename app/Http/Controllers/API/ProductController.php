@@ -16,10 +16,15 @@ use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index($catId)
     {
-        $products = Product::orderBy('created_at', 'desc')->paginate(1000);
-        //        $productss =  Product::all();
+        if ($catId == 0) {
+            $products = Product::orderBy('created_at', 'desc')->paginate(1000);
+        }
+        else {
+            $products = Product::where('category_id',$catId)->orderBy('created_at', 'desc')->paginate(1000);
+
+        }
         return response()->json($products, 200);
     }
 
@@ -72,10 +77,17 @@ class ProductController extends Controller
         return response($product, 201);
     }
 
-    public function categories(){
+    public function categories()
+    {
         $categories = Category::all();
-        return response()->json($categories,200);
+        return response()->json($categories, 200);
     }
+
+    // public function categoryId($cat_id){
+    //     $products = Product::where('category_id',$cat_id)->get();
+    //     return response()->json($products,200);
+    // }
+
 
     public function show($id)
     {
