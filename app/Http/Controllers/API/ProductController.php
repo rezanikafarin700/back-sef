@@ -12,21 +12,25 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
-
-
 class ProductController extends Controller
 {
     public function index($catId)
     {
-        if ($catId == 0) {
-            $products = Product::orderBy('created_at', 'desc')->paginate(1000);
-        }
-        else {
-            $products = Product::where('category_id',$catId)->orderBy('created_at', 'desc')->paginate(1000);
 
+        $title = request()->get('title');
+        if ($catId == 0) {
+            $products = Product::orderBy('created_at', 'desc')->where('title','LIKE','%'.$title.'%')->paginate(100);
+        } else {
+            $products = Product::orderBy('created_at', 'desc')->where('category_id', $catId)->where('title','LIKE','%'.$title.'%')->paginate(100);
         }
         return response()->json($products, 200);
     }
+
+    // public function search($title){
+    //     $products = Product::where('title','LIKE','%'.$title.'%')->paginate(100);
+    //     return response()->json($products, 200);
+
+    // }
 
 
 
