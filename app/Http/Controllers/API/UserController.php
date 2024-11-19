@@ -26,6 +26,12 @@ class UserController extends Controller
         return response()->json($users, 200);
     }
 
+    public function general(Request $request)
+    {
+        $name = request()->get('title');
+        $users = User::where('type', 'ADMIN')->where('name', 'LIKE', '%' . $name . '%')->orderBy('created_at', 'desc')->paginate(12);
+        return response()->json($users, 200);
+    }
 
 
     public function create()

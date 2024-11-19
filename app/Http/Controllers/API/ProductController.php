@@ -19,9 +19,9 @@ class ProductController extends Controller
 
         $title = request()->get('title');
         if ($catId == 0) {
-            $products = Product::orderBy('created_at', 'desc')->where('title','LIKE','%'.$title.'%')->paginate(100);
+            $products = Product::orderBy('created_at', 'desc')->where('title','LIKE','%'.$title.'%')->paginate(20);
         } else {
-            $products = Product::orderBy('created_at', 'desc')->where('category_id', $catId)->where('title','LIKE','%'.$title.'%')->paginate(100);
+            $products = Product::orderBy('created_at', 'desc')->where('category_id', $catId)->where('title','LIKE','%'.$title.'%')->paginate(20);
         }
         return response()->json($products, 200);
     }
