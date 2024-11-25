@@ -8,6 +8,8 @@ use App\Http\Requests\User\UpdateRequest;
 use App\Models\Product;
 use App\Models\Image;
 use App\Models\Category;
+use App\Models\City;
+use App\Models\Province;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -85,6 +87,18 @@ class ProductController extends Controller
     {
         $categories = Category::all();
         return response()->json($categories, 200);
+    }
+
+    public function cities()
+    {
+        $cities = City::all();
+        return response()->json($cities, 200);
+    }
+
+    public function provinces()
+    {
+        $provinces = Province::all();
+        return response()->json($provinces, 200);
     }
 
     // public function categoryId($cat_id){

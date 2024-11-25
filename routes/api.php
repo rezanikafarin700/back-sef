@@ -46,3 +46,5 @@ Route::group(['prefix' => 'products'],function (){
 
 
 Route::get('/categories','\App\Http\Controllers\API\ProductController@categories');
+Route::get('/cities','\App\Http\Controllers\API\ProductController@cities');
+Route::get('/provinces','\App\Http\Controllers\API\ProductController@provinces');
