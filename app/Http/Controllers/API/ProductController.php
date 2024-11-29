@@ -46,6 +46,8 @@ class ProductController extends Controller
             'user_id' => $request->user_id,
             'title' => $request->title,
             'price' => $request->price,
+            'city' => $request->city,
+            'province' => $request->province,
             'category_id' => $request->category,
             'discount' => $request->discount,
             'description' => $request->description,
@@ -137,7 +139,7 @@ class ProductController extends Controller
     public function update(\App\Http\Requests\Product\UpdateRequest $request, $id)
     {
         $product =  Product::findOrFail($id);
-        $data = $request->only(['title', 'shipping_cost', 'return', 'description', 'price', 'image', 'images']);
+        $data = $request->only(['title', 'shipping_cost', 'return', 'description', 'price', 'image', 'images','city','province']);
 
         if ($request->idDeleteImages) {
             $i = 0;

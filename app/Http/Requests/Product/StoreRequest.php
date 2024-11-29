@@ -30,7 +30,9 @@ class StoreRequest extends FormRequest
             'category' => 'required|integer',
             'discount' => 'required|integer',
             'shipping_cost' => 'required|integer',
-            'return' => 'required'
+            'return' => 'required',
+            'city' => 'required|integer',
+            'province' => 'required|integer',
 
         ];
     }

@@ -18,6 +18,8 @@ class CreateProductsTable extends Migration
             $table->unsignedBigInteger('user_id')->nullable()->default(null);
             $table->string('title');
             $table->unsignedBigInteger('price');
+            $table->smallInteger('city');
+            $table->smallInteger('province');
             $table->smallInteger('discount');
             $table->unsignedBigInteger('shipping_cost');
             $table->enum('return',['YES','NO'])->default('NO');
