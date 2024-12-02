@@ -21,9 +21,9 @@ class ProductController extends Controller
 
         $title = request()->get('title');
         if ($catId == 0) {
-            $products = Product::orderBy('created_at', 'desc')->where('title','LIKE','%'.$title.'%')->paginate(12);
+            $products = Product::orderBy('created_at', 'desc')->where('title', 'LIKE', '%' . $title . '%')->paginate(12);
         } else {
-            $products = Product::orderBy('created_at', 'desc')->where('category_id', $catId)->where('title','LIKE','%'.$title.'%')->paginate(12);
+            $products = Product::orderBy('created_at', 'desc')->where('category', $catId)->where('title', 'LIKE', '%' . $title . '%')->paginate(12);
         }
         return response()->json($products, 200);
     }
@@ -48,7 +48,7 @@ class ProductController extends Controller
             'price' => $request->price,
             'city' => $request->city,
             'province' => $request->province,
-            'category_id' => $request->category,
+            'category' => $request->category,
             'discount' => $request->discount,
             'description' => $request->description,
             'return' => $request->return,
@@ -103,17 +103,13 @@ class ProductController extends Controller
         return response()->json($provinces, 200);
     }
 
-    // public function categoryId($cat_id){
-    //     $products = Product::where('category_id',$cat_id)->get();
-    //     return response()->json($products,200);
-    // }
 
 
     public function show($id)
     {
         try {
             $product =  Product::findOrFail($id);
-            $catecory = Category::findOrFail($product->category_id);
+            $catecory = Category::findOrFail($product->category);
             $data = [
                 'id' => $product->id,
                 'return' => $product->return,
@@ -125,9 +121,11 @@ class ProductController extends Controller
                 'description' => $product->description,
                 'shipping_cost' => $product->shipping_cost,
                 'images' => $product->images,
-                'category_id' => $product->category_id,
-                'category' => $catecory->name,
+                'category' => $product->category,
+                'city' => $product->city,
+                'province' => $product->province,
                 'products' => $product->user,
+                'category_name' => $catecory->name,
             ];
             return response()->json($data, 200);
         } catch (\Exception $e) {
@@ -139,7 +137,7 @@ class ProductController extends Controller
     public function update(\App\Http\Requests\Product\UpdateRequest $request, $id)
     {
         $product =  Product::findOrFail($id);
-        $data = $request->only(['title', 'shipping_cost', 'return', 'description', 'price', 'image', 'images','city','province']);
+        $data = $request->only(['title', 'shipping_cost', 'return', 'description', 'price', 'image', 'images', 'city', 'province','category']);
 
         if ($request->idDeleteImages) {
             $i = 0;
