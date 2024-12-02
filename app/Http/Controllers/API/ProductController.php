@@ -48,6 +48,7 @@ class ProductController extends Controller
             'price' => $request->price,
             'city' => $request->city,
             'province' => $request->province,
+            'address' => $request->address,
             'category' => $request->category,
             'discount' => $request->discount,
             'description' => $request->description,
@@ -124,6 +125,7 @@ class ProductController extends Controller
                 'category' => $product->category,
                 'city' => $product->city,
                 'province' => $product->province,
+                'address' => $product->address,
                 'products' => $product->user,
                 'category_name' => $catecory->name,
             ];
@@ -137,7 +139,7 @@ class ProductController extends Controller
     public function update(\App\Http\Requests\Product\UpdateRequest $request, $id)
     {
         $product =  Product::findOrFail($id);
-        $data = $request->only(['title', 'shipping_cost', 'return', 'description', 'price', 'image', 'images', 'city', 'province','category']);
+        $data = $request->only(['title', 'shipping_cost', 'return', 'description', 'price', 'image', 'images', 'city', 'province','category','address']);
 
         if ($request->idDeleteImages) {
             $i = 0;

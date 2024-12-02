@@ -33,6 +33,7 @@ class StoreRequest extends FormRequest
             'return' => 'required',
             'city' => 'required|integer',
             'province' => 'required|integer',
+            'address' => 'required'
 
         ];
     }
